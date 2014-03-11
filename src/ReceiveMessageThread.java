@@ -32,7 +32,7 @@ public class ReceiveMessageThread extends Thread{
                     //Check the query results
                     if(message.getSubMessageType() == 1){
                         //Print out the message contents
-                        String[] messageInfo = message.getData().split(",");
+                        String[] messageInfo = message.getData().split(",", 3);
                         System.out.println(messageInfo[1] + " " + messageInfo[0] + ": " + messageInfo[2]);
                     }
                     else if(message.getSubMessageType() == 2){
