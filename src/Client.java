@@ -240,6 +240,10 @@ public class Client {
 
     }
 
+    public static void logout(){
+        loggedOn = false;
+    }
+
     public static void sendMessage(Message message) throws IOException{
         //Convert the data in bytes
         byte[] dataBytes = message.getData().getBytes();
