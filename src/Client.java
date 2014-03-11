@@ -91,11 +91,11 @@ public class Client {
                         //System.out.println("User is now logged in.");
                     }else if(loginResponse.getSubMessageType() == 1){
                          //user is already logged in
-                        System.out.println("Someone is already logged in to this account. Please try a different one.");
+                        //System.out.println("Someone is already logged in to this account. Please try a different one.");
 
                     }else if(loginResponse.getSubMessageType() == 2) {
                         //user entered incorrect credentials
-                        System.out.println("The credentials you entered were incorrect. Please try again.");
+                        //System.out.println("The credentials you entered were incorrect. Please try again.");
 
                     }
 
