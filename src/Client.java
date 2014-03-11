@@ -39,6 +39,7 @@ public class Client {
         //Set up the querying thread
         new QueryThread().start();
 
+
         while(!loggedOn) {
             //Ask the user whether they want to sign in or sign up
             System.out.println("Sign In (I)   --   Sign Up (U) :");
@@ -87,7 +88,7 @@ public class Client {
                 if (loginResponse.getSubMessageType() == 0 || loginResponse.getSubMessageType() == 1) {
                     //user is logged in
                     loggedOn = true;
-                    System.out.println("User is now logged on.");
+                    //System.out.println("User is now logged in.");
                 }else if(loginResponse.getSubMessageType() == 2) {
                     //user entered incorrect credentials
                     System.out.println("The credentials you entered were incorrect. Please try again.");
@@ -136,14 +137,27 @@ public class Client {
                     }
                 }
 
-
+                //send create user message
                 Message createUserMessage = new Message(MessageType.CREATE_USER,0,username + "," + password1);
 
                 sendMessage(createUserMessage);
 
-                Message sendMessageResponse = receiveThread.getReceivedMessage();
+                //wait for create user response
+                Message createUserResponse = receiveThread.getReceivedMessage();
+                System.out.println(createUserResponse.getData());
 
-                System.out.println(sendMessageResponse.getData());
+                //If successful then log the user in.
+                if(createUserResponse.getSubMessageType() == 0) {
+                    Message loginMessage = new Message(MessageType.LOGIN,0,username + "," + password1);
+                    sendMessage(loginMessage);
+
+                    //wait for response
+                    Message loginResponse = receiveThread.getReceivedMessage();
+                    System.out.println(loginResponse.getData());
+
+                    if
+
+                }
 
 
             } else {
@@ -153,10 +167,18 @@ public class Client {
             }
         }
 
-        //Main Loop
-        while(true){
 
-        }
+
+
+    }
+
+
+    public static void logIn() {
+
+    }
+
+    public static void signUp() {
+
     }
 
     public static void sendMessage(Message message) throws IOException{
