@@ -40,6 +40,7 @@ public class Client {
             System.out.println("Sign In (I)   --   Sign Up (U) :");
             String signInOrUp = reader.readLine();
 
+
             //Verify the user entered either an I or a U
             if (signInOrUp.equalsIgnoreCase("i")) {
                  //user thinks they already have an account
@@ -51,7 +52,7 @@ public class Client {
 
                     //check whether the entered username is valid
                     if (username.isEmpty() || username.contains(",") ) {
-                         System.out.println("Username must be at least 1 letter long and contain no commas.");
+                         System.out.println("Please enter a valid username.");
                          continue;
                     }else{
                         usernameValid = true;
@@ -65,7 +66,7 @@ public class Client {
 
                     //check whether the password is valid
                     if (password.isEmpty()) {
-                        System.out.println("Password must have at least 1 character.");
+                        System.out.println("Password must have a valid password.");
                         continue;
                     }else{
                         passwordValid = true;
@@ -77,11 +78,69 @@ public class Client {
                 Message loginMessage = new Message(MessageType.LOGIN,0, username + "," + password);
 
                 sendMessage(loginMessage);
+                Message loginResponse =  receiveThread.getReceivedMessage();
+                System.out.println(loginResponse.getData());
+                if (loginResponse.getSubMessageType() == 0 || loginResponse.getSubMessageType() == 1) {
+                    //user is logged in
+                    loggedOn = true;
+                    System.out.println("User is now logged on.");
+                }else if(loginResponse.getSubMessageType() == 2) {
+                    //user entered incorrect credentials
+                    System.out.println("The credentials you entered were incorrect. Please try again.");
 
-                System.out.println(receiveThread.getReceivedMessage().getData());
+                }
 
             }else if(signInOrUp.equalsIgnoreCase("u")) {
                 //user wants to create account
+
+                String username = "";
+                boolean usernameValid = false;
+                while (!usernameValid) {
+                    System.out.println("Please enter your desired username:");
+                    username = reader.readLine();
+
+                    //check whether the entered username is valid
+                    if (username.isEmpty() || username.contains(",") ) {
+                        System.out.println("Username must be at least 1 letter long and contain no commas.");
+                        continue;
+                    }else{
+                        usernameValid = true;
+                    }
+                }
+                String password1 = "";
+                String password2 = "";
+
+                boolean passwordsValid = false;
+                while(!passwordsValid) {
+                    System.out.println("Please enter your password:");
+                    password1 = reader.readLine();
+
+                    //check whether the password is valid
+                    if (password1.isEmpty()) {
+                        System.out.println("Password must have at least 1 character.");
+                        continue;
+                    }else{
+                        //ask user to verify their password
+                        System.out.println("Please re-enter your password:");
+                        password2 = reader.readLine();
+
+                        if (password2.equals(password1)) {
+                            passwordsValid = true;
+                        }else{
+                            System.out.println("Your passwords did not match. Please try again.");
+                        }
+                    }
+                }
+
+
+                Message createUserMessage = new Message(MessageType.CREATE_USER,0,username + "," + password1);
+
+                sendMessage(createUserMessage);
+
+                Message sendMessageResponse = receiveThread.receiveMessage();
+
+                System.out.println(sendMessageResponse.getData());
+
 
             } else {
                 //alert user their input was invalid and restart sign in process
