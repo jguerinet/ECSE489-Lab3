@@ -162,7 +162,7 @@ public class Client {
                         Message createStoreMessage = new Message(MessageType.CREATE_STORE," ");
                         sendMessage(createStoreMessage);
 
-                        //Message createStoreMessageResponse = receiveThread.getReceivedMessage();
+                        receiveThread.getReceivedMessage();
 
                     }else {
                         System.out.println("An error has occurred...");
@@ -258,7 +258,7 @@ public class Client {
                 }
 
                 //If user is logged on, send a query
-                while(loggedOn){
+                if(loggedOn){
                     try{
                         sendMessage(new Message(MessageType.QUERY_MESSAGES, " "));
                     }
