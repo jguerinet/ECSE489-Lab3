@@ -1,5 +1,8 @@
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 
 /**
@@ -33,30 +36,38 @@ public class Client {
         destinationAddress = InetAddress.getByName(SERVER_URL);
         System.out.println("Server Address: " + destinationAddress.getHostAddress());
         Socket destinationSocket = new Socket(destinationAddress.getHostAddress(), SERVER_PORT);
+    }
 
-        String message = "Hey there buddy";
-        byte[] messageBytes = message.getBytes();
-        int messageLength = messageBytes.length;
-        byte[] messageType = ByteBuffer.allocate(4).putInt(2).array();
-        byte[] subMessageType = ByteBuffer.allocate(4).putInt(10).array();
-        byte[] size = ByteBuffer.allocate(4).putInt(messageLength).array();
-        byte[] payloadBytes = new byte[12 + messageLength];
-        System.arraycopy(messageType, 0, payloadBytes, 0, 4);
-        System.arraycopy(subMessageType, 0, payloadBytes, 4, 4);
-        System.arraycopy(size, 0, payloadBytes, 8, 4);
-        System.arraycopy(messageBytes, 0, payloadBytes, 12, messageLength);
-        DatagramPacket packet = new DatagramPacket(payloadBytes, payloadBytes.length, destinationAddress, SERVER_PORT);
+    public void sendMessage(Message message){
+        //Convert the data in bytes
+        byte[] dataBytes = message.getData().getBytes();
 
-        socket.connect(destinationSocket.getRemoteSocketAddress());
-        BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
-        out.write(payloadBytes);
-        out.flush();
+        //Get the length of the dataBytes
+        int dataSize = dataBytes.length;
 
-        BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
+        //Get all of the necessary ints in bytes
+        byte[] messageTypeBytes = ByteBuffer.allocate(4).putInt(message.getMessageType()).array();
+        byte[] subMessageTypeBytes = ByteBuffer.allocate(4).putInt(message.getSubMessageType()).array();
+        byte[] dataSizeBytes = ByteBuffer.allocate(4).putInt(dataSize).array();
 
-        byte[] packetBuffer = new byte[payloadBytes.length];
-        in.read(packetBuffer);
+        //Put it all into one array of bytes
+        byte[] messageBytes = new byte[12 + dataSize];
+        System.arraycopy(messageTypeBytes, 0, messageBytes, 0, 4);
+        System.arraycopy(subMessageTypeBytes, 0, messageBytes, 4, 4);
+        System.arraycopy(dataSizeBytes, 0, messageBytes, 8, 4);
+        System.arraycopy(dataBytes, 0, messageBytes, 12, dataSize);
 
-        System.out.println("Packet Data: " + new String(packetBuffer));
+
+//        socket.connect(destinationSocket.getRemoteSocketAddress());
+//        BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
+//        out.write(messageBytes);
+//        out.flush();
+//
+//        BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
+//
+//        byte[] packetBuffer = new byte[messageBytes.length];
+//        in.read(packetBuffer);
+//
+//        System.out.println("Packet Data: " + new String(packetBuffer));
     }
 }
