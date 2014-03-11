@@ -3,16 +3,17 @@
  * Date: 2014-03-11 9:04
  */
 public class Message {
-    private int messageType, subMessageType;
+    private MessageType messageType;
+    private int subMessageType;
     private String data;
 
-    public Message(int messageType, int subMessageType, String data){
+    public Message(MessageType messageType, int subMessageType, String data){
         this.messageType = messageType;
         this.subMessageType = subMessageType;
         this.data = data;
     }
 
-    public int getMessageType(){
+    public MessageType getMessageType(){
         return this.messageType;
     }
 

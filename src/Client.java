@@ -40,7 +40,7 @@ public class Client {
         int dataSize = dataBytes.length;
 
         //Get all of the necessary ints in bytes
-        byte[] messageTypeBytes = ByteBuffer.allocate(4).putInt(message.getMessageType()).array();
+        byte[] messageTypeBytes = ByteBuffer.allocate(4).putInt(message.getMessageType().getMessageTypeInt()).array();
         byte[] subMessageTypeBytes = ByteBuffer.allocate(4).putInt(message.getSubMessageType()).array();
         byte[] dataSizeBytes = ByteBuffer.allocate(4).putInt(dataSize).array();
 
@@ -85,6 +85,6 @@ public class Client {
         String data = new String(dataBytes);
 
         //Return a message with all of this data
-        return new Message(messageType, subMessageType, data);
+        return new Message(MessageType.getMessageType(messageType), subMessageType, data);
     }
 }
