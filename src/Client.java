@@ -80,7 +80,7 @@ public class Client {
                 }
                 System.out.println("Logging in...");
                 //create login message
-                Message loginMessage = new Message(MessageType.LOGIN,0, username + "," + password);
+                Message loginMessage = new Message(MessageType.LOGIN, username + "," + password);
 
                 sendMessage(loginMessage);
                 Message loginResponse =  receiveThread.getReceivedMessage();
@@ -138,7 +138,7 @@ public class Client {
                 }
 
                 //send create user message
-                Message createUserMessage = new Message(MessageType.CREATE_USER,0,username + "," + password1);
+                Message createUserMessage = new Message(MessageType.CREATE_USER,username + "," + password1);
 
                 sendMessage(createUserMessage);
 
@@ -148,14 +148,26 @@ public class Client {
 
                 //If successful then log the user in.
                 if(createUserResponse.getSubMessageType() == 0) {
-                    Message loginMessage = new Message(MessageType.LOGIN,0,username + "," + password1);
+                    Message loginMessage = new Message(MessageType.LOGIN,username + "," + password1);
                     sendMessage(loginMessage);
 
                     //wait for response
                     Message loginResponse = receiveThread.getReceivedMessage();
                     System.out.println(loginResponse.getData());
 
-                    if
+                    if(loginResponse.getSubMessageType() == 0 || loginResponse.getSubMessageType() == 1) {
+                        //login success -> create store
+                        loggedOn = true;
+
+                        Message createStoreMessage = new Message(MessageType.CREATE_STORE," ");
+                        sendMessage(createStoreMessage);
+
+                        //Message createStoreMessageResponse = receiveThread.getReceivedMessage();
+
+                    }else {
+                        System.out.println("An error has occurred...");
+                        continue;
+                    }
 
                 }
 
@@ -167,17 +179,13 @@ public class Client {
             }
         }
 
+        //main operation loop
+        while(true){
+
+        }
 
 
 
-    }
-
-
-    public static void logIn() {
-
-    }
-
-    public static void signUp() {
 
     }
 
