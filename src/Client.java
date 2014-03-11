@@ -36,7 +36,8 @@ public class Client {
         receiveThread = new ReceiveMessageThread(clientSocket);
         receiveThread.start();
 
-
+        //Set up the querying thread
+        new QueryThread().start();
 
         while(!loggedOn) {
             //Ask the user whether they want to sign in or sign up
