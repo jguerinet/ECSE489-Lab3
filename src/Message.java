@@ -13,6 +13,12 @@ public class Message {
         this.data = data;
     }
 
+    public Message(MessageType messageType, String data){
+        this.messageType = messageType;
+        this.subMessageType = 0;
+        this.data = data;
+    }
+
     public MessageType getMessageType(){
         return this.messageType;
     }
