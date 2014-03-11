@@ -31,7 +31,7 @@ public class Client {
 
         //Set up the receiving thread
         receiveThread = new ReceiveThread();
-        receiveThread.run();
+        receiveThread.start();
 
 
 
@@ -78,7 +78,7 @@ public class Client {
 
                 sendMessage(loginMessage);
 
-
+                System.out.println(receiveThread.getReceivedMessage().getData());
 
             }else if(signInOrUp.equalsIgnoreCase("u")) {
                 //user wants to create account
@@ -155,11 +155,16 @@ public class Client {
         }
 
         public Message getReceivedMessage(){
+            while(receivedMessage == null){
+                try{Thread.sleep(200);} catch (InterruptedException e) {}
+            }
+
+            Message message = this.receivedMessage;
+
             //Continue running the code
             run = true;
-            while(receivedMessage == null){}
 
-            return this.receivedMessage;
+            return message;
         }
 
         private Message receiveMessage() throws IOException{
