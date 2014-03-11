@@ -8,11 +8,13 @@ import java.nio.ByteBuffer;
  * Date: 17/02/14 4:08 PM
  */
 public class Client {
-    public static final String SERVER_URL = "dsp2014.ece.mcgill.ca";
-    public static final int SERVER_PORT = 5000;
+    private static final String SERVER_URL = "dsp2014.ece.mcgill.ca";
+    private static final int SERVER_PORT = 5000;
 
-    static BufferedReader reader;
-    static Socket clientSocket;
+    private static Socket clientSocket;
+
+    private boolean hasAccount = false;
+    private boolean loggedOn = false;
 
     public static void main(String[] args) throws IOException {
         //Set up the server socket
@@ -24,12 +26,12 @@ public class Client {
         clientSocket.connect(serverSocket.getRemoteSocketAddress());
 
         //Set up the CLI reader
-        reader = new BufferedReader(new InputStreamReader(System.in,"UTF-8"));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in,"UTF-8"));
 
-        //Get the user's name
-//        System.out.print("Please enter your name: ");
-//        name = reader.readLine().trim();
-        System.out.println("Server Address: " + serverAddress.getHostAddress());
+        //Main Loop
+        while(true){
+
+        }
     }
 
     public void sendMessage(Message message) throws IOException{
