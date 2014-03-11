@@ -141,7 +141,7 @@ public class Client {
 
                 sendMessage(createUserMessage);
 
-                Message sendMessageResponse = receiveThread.receiveMessage();
+                Message sendMessageResponse = receiveThread.getReceivedMessage();
 
                 System.out.println(sendMessageResponse.getData());
 
