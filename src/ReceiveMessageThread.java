@@ -25,13 +25,20 @@ public class ReceiveMessageThread extends Thread{
                 receivedMessage = receiveMessage();
 
                 //Check if it's a message that the main thread would need
-                //Main thread needs all messages except the inactivity logout and the querying of the messages
-                //TODO Add the inactivity logout here
+                //Main thread needs all messages except the querying of the messages
                 if(receivedMessage.getMessageType() == MessageType.QUERY_MESSAGES){
                     //Keep on running the code if ever it's just a query
                     run = true;
+
+                    //Check the query results
+                    if(receivedMessage.getSubMessageType() == 1){
+                        //Print out the message contents
+                        String[] messageInfo = receivedMessage.getData().split(",");
+                        System.out.println(messageInfo[1] + " " + messageInfo[0] + ": " + messageInfo[2]);
+                    }
                 }
                 else{
+                    //Set run to false so that we wait until the main thread retrieves the message before continuing
                     run = false;
                 }
             }
