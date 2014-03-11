@@ -1,3 +1,4 @@
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,16 +15,16 @@ public class Client {
     public static final int SERVER_PORT = 5000;
 
     static BufferedReader reader;
-    static Socket socket;
-
-    static InetAddress destinationAddress, hostInternalAddress;
+    static Socket clientSocket;
 
     public static void main(String[] args) throws IOException {
-        //Set up the internal info
-        hostInternalAddress = InetAddress.getLocalHost();
+        //Set up the server socket
+        InetAddress serverAddress = InetAddress.getByName(SERVER_URL);
+        Socket serverSocket = new Socket(serverAddress.getHostAddress(), SERVER_PORT);
 
-        //Set up the socket
-        socket = new Socket();
+        //Set up the client socket
+        clientSocket = new Socket();
+        clientSocket.connect(serverSocket.getRemoteSocketAddress());
 
         //Set up the CLI reader
         reader = new BufferedReader(new InputStreamReader(System.in,"UTF-8"));
@@ -31,14 +32,10 @@ public class Client {
         //Get the user's name
 //        System.out.print("Please enter your name: ");
 //        name = reader.readLine().trim();
-
-        //Start the call thread
-        destinationAddress = InetAddress.getByName(SERVER_URL);
-        System.out.println("Server Address: " + destinationAddress.getHostAddress());
-        Socket destinationSocket = new Socket(destinationAddress.getHostAddress(), SERVER_PORT);
+        System.out.println("Server Address: " + serverAddress.getHostAddress());
     }
 
-    public void sendMessage(Message message){
+    public void sendMessage(Message message) throws IOException{
         //Convert the data in bytes
         byte[] dataBytes = message.getData().getBytes();
 
@@ -57,11 +54,9 @@ public class Client {
         System.arraycopy(dataSizeBytes, 0, messageBytes, 8, 4);
         System.arraycopy(dataBytes, 0, messageBytes, 12, dataSize);
 
-
-//        socket.connect(destinationSocket.getRemoteSocketAddress());
-//        BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
-//        out.write(messageBytes);
-//        out.flush();
+        BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream());
+        out.write(messageBytes);
+        out.flush();
 //
 //        BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
 //
