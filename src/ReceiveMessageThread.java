@@ -11,7 +11,9 @@ import java.nio.ByteBuffer;
 public class ReceiveMessageThread extends Thread{
     private Message receivedMessage;
     private Socket clientSocket;
-    private boolean run = true;
+    private byte[] messageTypeBytes = new byte[4];
+    private byte[] subMessageTypeBytes = new byte[4];
+    private byte[] dataSizeBytes = new byte[4];
 
     public ReceiveMessageThread(Socket clientSocket){
         this.clientSocket = clientSocket;
@@ -19,31 +21,30 @@ public class ReceiveMessageThread extends Thread{
 
     @Override
     public void run(){
-        try {
-            while(run){
+        while(true){
+            try {
                 //Get the message
-                receivedMessage = receiveMessage();
+                Message message = receiveMessage();
 
                 //Check if it's a message that the main thread would need
                 //Main thread needs all messages except the querying of the messages
-                if(receivedMessage.getMessageType() == MessageType.QUERY_MESSAGES){
-                    //Keep on running the code if ever it's just a query
-                    run = true;
-
+                if(message.getMessageType() == MessageType.QUERY_MESSAGES){
                     //Check the query results
-                    if(receivedMessage.getSubMessageType() == 1){
+                    if(message.getSubMessageType() == 1){
                         //Print out the message contents
-                        String[] messageInfo = receivedMessage.getData().split(",");
+                        String[] messageInfo = message.getData().split(",");
                         System.out.println(messageInfo[1] + " " + messageInfo[0] + ": " + messageInfo[2]);
+                    }
+                    else if(message.getSubMessageType() == 2){
+                        System.out.println(message.getData());
                     }
                 }
                 else{
-                    //Set run to false so that we wait until the main thread retrieves the message before continuing
-                    run = false;
+                    receivedMessage = message;
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -52,13 +53,10 @@ public class ReceiveMessageThread extends Thread{
             try{Thread.sleep(200);} catch (InterruptedException e) {}
         }
 
-        Message message = this.receivedMessage;
+        Message message = receivedMessage;
 
         //Set receivedMessage to null
         receivedMessage = null;
-
-        //Continue running the code
-        run = true;
 
         return message;
     }
@@ -73,15 +71,12 @@ public class ReceiveMessageThread extends Thread{
         }
 
         //Retrieve the first 12 bytes, convert them into numbers
-        byte[] messageTypeBytes = new byte[4];
         in.read(messageTypeBytes);
         int messageType = ByteBuffer.wrap(messageTypeBytes).getInt();
 
-        byte[] subMessageTypeBytes = new byte[4];
         in.read(subMessageTypeBytes);
         int subMessageType = ByteBuffer.wrap(subMessageTypeBytes).getInt();
 
-        byte[] dataSizeBytes = new byte[4];
         in.read(dataSizeBytes);
         int dataSize = ByteBuffer.wrap(dataSizeBytes).getInt();
 
