@@ -179,8 +179,39 @@ public class Client {
             }
         }
 
-        //main operation loop
+
+        System.out.println("Message format: @username, your message here...");
+        //send message loop
         while(true){
+            //this is where the user sends messages
+
+            String line = reader.readLine();
+
+            if(line.startsWith("@")){
+                 String[] lineArray = line.split(",",2);
+                 if (lineArray.length == 2) {
+                     Message message = new Message(MessageType.SEND_MESSAGE,line.substring(1));
+                     sendMessage(message);
+
+                     Message messageResponse = receiveThread.getReceivedMessage();
+
+                     if (messageResponse.getSubMessageType() != 0) {
+                         System.out.println(messageResponse.getData());
+                     }
+                 }else {
+                     //error
+                     System.out.println("Syntax Error: Please try again.");
+                     System.out.println("Message format: @username, your message here...");
+                 }
+
+            }else {
+                //error
+                System.out.println("Syntax Error: Please try again.");
+                System.out.println("Message format: @username, your message here...");
+            }
+
+
+
 
         }
 
