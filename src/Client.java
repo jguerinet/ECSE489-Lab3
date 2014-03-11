@@ -1,7 +1,4 @@
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -54,15 +51,40 @@ public class Client {
         System.arraycopy(dataSizeBytes, 0, messageBytes, 8, 4);
         System.arraycopy(dataBytes, 0, messageBytes, 12, dataSize);
 
+        //Send the message
         BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream());
         out.write(messageBytes);
         out.flush();
-//
-//        BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
-//
-//        byte[] packetBuffer = new byte[messageBytes.length];
-//        in.read(packetBuffer);
-//
-//        System.out.println("Packet Data: " + new String(packetBuffer));
+    }
+
+    public Message receiveMessage() throws IOException{
+        InputStream in = new BufferedInputStream(clientSocket.getInputStream());
+        int bytesAvailable = in.available();
+
+        //Wait until we have at least 12 bytes available so we can find out how much data we have to read
+        while(bytesAvailable < 12){
+            bytesAvailable = in.available();
+        }
+
+        //Retrieve the first 12 bytes, convert them into numbers
+        byte[] messageTypeBytes = new byte[4];
+        in.read(messageTypeBytes);
+        int messageType = ByteBuffer.wrap(messageTypeBytes).getInt();
+
+        byte[] subMessageTypeBytes = new byte[4];
+        in.read(subMessageTypeBytes);
+        int subMessageType = ByteBuffer.wrap(subMessageTypeBytes).getInt();
+
+        byte[] dataSizeBytes = new byte[4];
+        in.read(dataSizeBytes);
+        int dataSize = ByteBuffer.wrap(dataSizeBytes).getInt();
+
+        //Retrieve the correct number of bytes for the data, convert it into a String
+        byte[] dataBytes = new byte[dataSize];
+        in.read(dataBytes);
+        String data = new String(dataBytes);
+
+        //Return a message with all of this data
+        return new Message(messageType, subMessageType, data);
     }
 }
