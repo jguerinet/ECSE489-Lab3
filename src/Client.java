@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
  */
 public class Client {
     private static final String SERVER_URL = "dsp2014.ece.mcgill.ca";
-    private static final int SERVER_PORT = 5000;
+    private static final int SERVER_PORT = 5003;
 
     private static Socket clientSocket;
     private static ReceiveMessageThread receiveThread;
@@ -193,12 +193,13 @@ public class Client {
                 String line = reader.readLine();
 
                 if (line.equalsIgnoreCase("logout")) {
+                    loggedOn = false;
+
                     //log user out
                     Message logoutMessage = new Message(MessageType.LOGOFF," ");
                     sendMessage(logoutMessage);
 
                     receiveThread.getReceivedMessage();
-                    loggedOn = false;
 
                 }  else if(line.startsWith("@")){      //ensure that the username started with a @
                     //split message with fist comma
