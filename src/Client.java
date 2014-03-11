@@ -13,8 +13,8 @@ public class Client {
 
     private static Socket clientSocket;
 
-    private boolean hasAccount = false;
-    private boolean loggedOn = false;
+    private static boolean hasAccount = false;
+    private static boolean loggedOn = false;
 
     public static void main(String[] args) throws IOException {
         //Set up the server socket
@@ -28,13 +28,72 @@ public class Client {
         //Set up the CLI reader
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in,"UTF-8"));
 
+
+
+        while(!loggedOn) {
+            //Ask the user whether they want to sign in or sign up
+            System.out.println("Sign In (I)   --   Sign Up (U) :");
+            String signInOrUp = reader.readLine();
+
+            //Verify the user entered either an I or a U
+            if (signInOrUp.equalsIgnoreCase("i")) {
+                 //user thinks they already have an account
+                String username = "";
+                boolean usernameValid = false;
+                while (!usernameValid) {
+                    System.out.println("Please enter your username:");
+                    username = reader.readLine();
+
+                    //check whether the entered username is valid
+                    if (username.isEmpty() || username.contains(",") ) {
+                         System.out.println("Username must be at least 1 letter long and contain no commas.");
+                         continue;
+                    }else{
+                        usernameValid = true;
+                    }
+                }
+                String password = "";
+                boolean passwordValid = false;
+                while(!passwordValid) {
+                    System.out.println("Please enter your password:");
+                    password = reader.readLine();
+
+                    //check whether the password is valid
+                    if (password.isEmpty()) {
+                        System.out.println("Password must have at least 1 character.");
+                        continue;
+                    }else{
+                        passwordValid = true;
+                    }
+
+                }
+                System.out.println("Logging in...");
+                //create login message
+                Message loginMessage = new Message(MessageType.LOGIN,0, username + "," + password);
+
+                sendMessage(loginMessage);
+
+
+
+            }else if(signInOrUp.equalsIgnoreCase("u")) {
+                //user wants to create account
+
+            } else {
+                //alert user their input was invalid and restart sign in process
+                System.out.println("Error: Improperly formatted response. Please try again.");
+                continue;
+            }
+        }
+
+
+
         //Main Loop
         while(true){
 
         }
     }
 
-    public void sendMessage(Message message) throws IOException{
+    public static void sendMessage(Message message) throws IOException{
         //Convert the data in bytes
         byte[] dataBytes = message.getData().getBytes();
 
@@ -59,7 +118,7 @@ public class Client {
         out.flush();
     }
 
-    public Message receiveMessage() throws IOException{
+    public static  Message receiveMessage() throws IOException{
         InputStream in = new BufferedInputStream(clientSocket.getInputStream());
         int bytesAvailable = in.available();
 
