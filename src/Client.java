@@ -202,12 +202,13 @@ public class Client {
                     receiveThread.getReceivedMessage();
 
                 } else if(line.equalsIgnoreCase("deleteuser")){
+                    loggedOn = false;
+
                     //delete user message
                     Message deleteUserMessage = new Message(MessageType.DELETE_USER," ");
                     sendMessage(deleteUserMessage);
 
                     receiveThread.getReceivedMessage();
-                    loggedOn = false;
 
                 } else if(line.startsWith("@")){      //ensure that the username started with a @
                     //split message with fist comma

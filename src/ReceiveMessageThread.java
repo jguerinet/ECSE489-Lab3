@@ -41,6 +41,7 @@ public class ReceiveMessageThread extends Thread{
                 }
                 else if(message.getMessageType() == MessageType.LOGOFF && message.getSubMessageType() == 2){
                     Client.logout();
+                    receivedMessage = message;
                 }
                 else{
                     receivedMessage = message;
