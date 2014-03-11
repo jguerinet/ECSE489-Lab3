@@ -186,6 +186,7 @@ public class Client {
 
             System.out.println("Message format: @username, your message here...");
             System.out.println("Type 'Logout' to exit.");
+            System.out.println("Delete user by typing 'deleteuser'");
             //send message loop
             while(loggedOn){
                 //this is where the user sends messages
