@@ -40,7 +40,6 @@ public class ReceiveMessageThread extends Thread{
                     }
                 }
                 else if(message.getMessageType() == MessageType.LOGOFF && message.getSubMessageType() == 2){
-                    System.out.println(message.getData());
                     Client.logout();
                 }
                 else{
