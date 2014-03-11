@@ -152,8 +152,6 @@ public class Client {
             }
         }
 
-
-
         //Main Loop
         while(true){
 
@@ -183,5 +181,30 @@ public class Client {
         BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream());
         out.write(messageBytes);
         out.flush();
+    }
+
+    private static class QueryThread extends Thread{
+
+        @Override
+        public void run(){
+            while(true){
+                //Wait one second
+                try{
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                //If user is logged on, send a query
+                while(loggedOn){
+                    try{
+                        sendMessage(new Message(MessageType.QUERY_MESSAGES, " "));
+                    }
+                    catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 }
